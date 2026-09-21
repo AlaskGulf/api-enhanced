@@ -30,7 +30,7 @@
 
 ## 项目简介
 
-网易云音乐第三方 Node.js API, 支持丰富的音乐相关接口，适合自建服务、二次开发和多平台部署(如果原版诈尸, 我会及时同步 or 归档)。
+网易云音乐第三方 Node.js API, 支持丰富的音乐相关接口，适合自建服务、二次开发和多平台部署
 
 > [!IMPORTANT]
 >
@@ -45,14 +45,14 @@
 
 ### 环境要求
 
-- Node.js 18 及以上
+- Node.js 22 及以上
 - 推荐使用 pnpm 进行依赖管理
 
 ### 安装
 
 ```bash
 git clone https://github.com/neteasecloudmusicapienhanced/api-enhanced.git
-cd api
+cd api-enhanced
 pnpm i
 ```
 
@@ -215,7 +215,7 @@ pnpm test
 
 原作者 [Binaryify/NeteaseCloudMusicApi](https://github.com/binaryify/NeteaseCloudMusicApi) 项目为本项目基础 (该项目在`npmjs`网站上仍持续维护, 但 github 仓库已不再更新)
 
-感谢大佬们为逆向eapi, weapi等加密算法所做的贡献
+感谢大佬们为逆向eapi, weapi, xeapi等加密算法所做的贡献
 
 项目参考:
 
@@ -224,6 +224,8 @@ pnpm test
 [listen1/listen1_chrome_extension](https://github.com/listen1/listen1_chrome_extension)
 
 [chaunsin/netease-cloud-music](https://github.com/chaunsin/netease-cloud-music)
+
+[folltoshe/netease-report-listen-song](https://github.com/folltoshe/netease-report-listen-song)
 
 ### SDK 生态
 
@@ -243,6 +245,8 @@ pnpm test
 - [MaigoLabs/amaoke.app](https://github.com/MaigoLabs/amaoke.app)
 
 - [Yueby/music-together](https://github.com/Yueby/music-together)
+
+- [chthollyphlie/folia-major](https://github.com/chthollyphile/folia-major)
 
 ## License
 

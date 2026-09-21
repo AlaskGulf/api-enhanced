@@ -1,3 +1,5 @@
+// 获取游客cookie
+
 const CryptoJS = require('crypto-js')
 const path = require('path')
 const fs = require('fs')
@@ -37,7 +39,7 @@ module.exports = async (query, request) => {
   let result = await request(
     `/api/register/anonimous`,
     data,
-    createOption(query, 'weapi'),
+    createOption(query, 'xeapi'),
   )
   if (result.body.code === 200) {
     result = {

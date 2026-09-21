@@ -14,6 +14,7 @@ module.exports = async (query, request) => {
       ? query.captcha
       : query.md5_password || CryptoJS.MD5(query.password).toString(),
     remember: 'true',
+    secureCaptcha: query.sca || '',
   }
   let result = await request(
     `/api/w/login/cellphone`,

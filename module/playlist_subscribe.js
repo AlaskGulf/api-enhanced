@@ -9,6 +9,6 @@ module.exports = (query, request) => {
       ? { checkToken: query.checkToken || APP_CONF.checkToken }
       : {}),
   }
-  query.checkToken = true // 强制开启checkToken
+  query.checkToken = 'v2' // 强制开启checkToken
   return request(`/api/playlist/${path}`, data, createOption(query, 'eapi'))
 }

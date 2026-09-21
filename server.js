@@ -10,6 +10,7 @@ const { cookieToJson } = require('./util/index')
 const fileUpload = require('express-fileupload')
 const decode = require('safe-decode-uri-component')
 const logger = require('./util/logger.js')
+const { APP_CONF } = require('./util/config.json')
 
 /**
  * The version check result.
@@ -299,15 +300,15 @@ async function constructServer(moduleDefs) {
       )
 
       try {
+        let usedCrypto = ''
         const moduleResponse = await moduleDef.module(query, (...params) => {
-          // 参数注入客户端IP
           const obj = [...params]
           const options = obj[2] || {}
+          usedCrypto = options.crypto || ''
           let ip = ''
 
           if (options.randomCNIP) {
             ip = global.cnIp
-            // logger.info('Using random Chinese IP for request:', ip)
           } else {
             ip = req.ip
 
@@ -317,7 +318,6 @@ async function constructServer(moduleDefs) {
             if (ip == '::1') {
               ip = global.cnIp
             }
-            // logger.info('Requested from ip:', ip)
           }
 
           obj[2] = {
@@ -327,7 +327,10 @@ async function constructServer(moduleDefs) {
 
           return request(...obj)
         })
-        logger.info(`Request Success: ${decode(req.originalUrl)}`)
+        const displayCrypto = usedCrypto || (APP_CONF.encrypt ? 'eapi' : 'api')
+        logger.info(
+          `Request Success: [${displayCrypto}] ${decode(req.originalUrl)}`,
+        )
 
         // 夹带私货部分：如果开启了通用解锁，并且是获取歌曲URL的接口，则尝试解锁（如果需要的话）ヾ(≧▽≦*)o
         if (
@@ -422,7 +425,7 @@ async function serveNcmApi(options) {
     options.checkVersion &&
     checkVersion().then(({ npmVersion, ourVersion, status }) => {
       if (status == VERSION_CHECK_RESULT.NOT_LATEST) {
-        logger.info(
+        logger.warn(
           `最新版本: ${npmVersion}, 当前版本: ${ourVersion}, 请及时更新`,
         )
       }
@@ -444,11 +447,9 @@ async function serveNcmApi(options) {
   ╠═╣╠═╝║    ║╣ ║║║╠═╣╠═╣║║║║  ║╣  ║║
   ╩ ╩╩  ╩    ╚═╝╝╚╝╩ ╩╩ ╩╝╚╝╚═╝╚═╝═╩╝
     `)
-    logger.info(`
-- Server started successfully @ http://${host ? host : 'localhost'}:${port}
-- Environment: ${process.env.NODE_ENV || 'development'}
-- Node Version: ${process.version}
-- Process ID: ${process.pid}`)
+    logger.info(
+      `Server started successfully @ http://${host ? host : 'localhost'}:${port}`,
+    )
   })
 
   return appExt

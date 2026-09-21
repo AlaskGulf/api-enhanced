@@ -88,6 +88,7 @@ v4.29.9 加入了生成随机中国 IP 功能, 在请求时加上 `randomCNIP=tr
 5. 直接点`Continue`
 6. `PROJECT NAME`自己填,`FRAMEWORK PRESET` 选 `Other` 然后直接点 `Deploy` 接着等部署完成即可
 
+
 ## 腾讯云 serverless 部署
 
 因 `Vercel` 在国内访问太慢(不绑定自己的域名的情况下),在此提供腾讯云 serverless 部署方法
@@ -101,6 +102,7 @@ v4.29.9 加入了生成随机中国 IP 功能, 在请求时加上 `randomCNIP=tr
 5. 输入`应用名`,上传方式选择`代码仓库`,进行 GitHub 授权(如已授权可跳过这一步),代码仓库选择刚刚 fork 的项目
 6. 启动文件填入:
 
+
 ```
 #!/bin/bash
 export PORT=9000
@@ -112,6 +114,7 @@ export PORT=9000
 - 注意
   - 腾讯云 serverless 并不是免费的,前三个月有免费额度,之后收费
   - 当前(2024-08-24), 用此法创建的话, 会`默认`关联一个"日志服务-日志主题"(创建过程中没有提醒), 此服务是计量收费的
+
 
 ## 可以使用代理
 
@@ -180,6 +183,7 @@ request 相关的环境变量
 5. no_proxy
 6. NO_PROXY
 
+
 ```shell
 docker pull moefurina/ncm-api
 
@@ -213,6 +217,7 @@ $ sudo docker run -d -p 3000:3000 netease-music-api
 - 请求参数模式下, 解密结果可直接带到 `/api.html` 继续调试
 - 需要返回值加密时, 可传 `e_r=1`, `weapi` 和 `eapi` 都支持
 - 目前支持算法 有 `weapi`, `eapi`, `linuxapi` 和 `xeapi` (xeapi 是一种不加密的特殊算法, 主要用于调试加密前的原始请求参数)
+
 
 ## 接口文档
 
@@ -268,17 +273,19 @@ AI 生成的图,仅供娱乐()
 
 #### 1. 手机登录
 
-**必选参数 :**  
+**必选参数 :**
 `phone`: 手机号码
 
 `password`: 密码
 
-**可选参数 :**  
+**可选参数 :**
 `countrycode`: 国家码，用于国外手机号登录，例如美国传入：`1`
 
 `md5_password`: md5 加密后的密码,传入后 `password` 参数将失效
 
-`captcha`: 验证码,使用 [`/captcha/sent`](#发送验证码)接口传入手机号获取验证码,调用此接口传入验证码,可使用验证码登录,传入后 `password` 参数将失效
+`captcha`: 验证码,使用 `/captcha/sent` 或 `/captcha/sent/v1`接口传入手机号获取验证码,调用此接口传入验证码,可使用验证码登录,传入后 `password` 参数将失效
+
+`sca`: 网易易盾滑块验证token, 获取方式未知
 
 **接口地址 :** `/login/cellphone`
 
@@ -392,6 +399,19 @@ body {
 
 **调用例子 :** `/captcha/sent?phone=13xxx`
 
+### 新版发送验证码
+
+说明 : 调用此接口 ,传入手机号码, 可发送验证码
+
+**必选参数 :** `phone`: 手机号码
+
+**可选参数 :**
+`ctcode`: 国家区号,默认 86 即中国
+
+**接口地址 :** `/captcha/sent/v1`
+
+**调用例子 :** `/captcha/sent/v1?phone=13xxx`
+
 ### 验证验证码
 
 说明 : 调用此接口 ,传入手机号码和验证码, 可校验验证码是否正确
@@ -432,11 +452,11 @@ body {
 
 ### 检测手机号码是否已注册
 
-说明 : 调用此接口 ,可检测手机号码是否已注册  
-**必选参数 :**  
+说明 : 调用此接口 ,可检测手机号码是否已注册
+**必选参数 :**
 `phone` : 手机号码
 
-**可选参数 :**  
+**可选参数 :**
 `countrycode`: 国家码，用于国外手机号，例如美国传入：`1` ,默认 86 即中国
 
 **接口地址 :** `/cellphone/existence/check`
@@ -445,7 +465,7 @@ body {
 
 ### 初始化昵称
 
-说明 : 刚注册的账号(需登录),调用此接口 ,可初始化昵称  
+说明 : 刚注册的账号(需登录),调用此接口 ,可初始化昵称
 **必选参数 :**
 `nickname` : 昵称
 
@@ -700,7 +720,7 @@ tags: 歌单标签
 
 说明 : 登录后调用此接口,使用`'Content-Type': 'multipart/form-data'`上传图片 formData(name 为'imgFile'),可更新歌单封面(参考:https://github.com/neteasecloudmusicapienhanced/api-enhanced/blob/main/public/playlist_cover_update.html)
 
-**必选参数 :**  
+**必选参数 :**
 `id`: 歌单 id 3143833470
 
 **可选参数 :**
@@ -730,7 +750,7 @@ tags: 歌单标签
 
 说明 : 登录后调用此接口,可以根据歌曲 id 顺序调整歌曲顺序
 
-**必选参数 :**  
+**必选参数 :**
 `pid`: 歌单 id
 
 `ids`: 歌曲 id 列表
@@ -806,6 +826,8 @@ tags: 歌单标签
 
 `lasttime` : 返回数据的 `lasttime` ,默认-1,传入上一次返回结果的 lasttime,将会返回下一页的数据
 
+接口会传入官方客户端使用的 `fromRN=true`，登录用户读取自己的动态时可获得网易云允许本人查看的非公开动态。返回的 `size` 是网易云账户侧统计值，不保证等于分页后实际可获取的动态数量。
+
 **接口地址 :** `/user/event`
 
 **调用例子 :** `/user/event?uid=32953014` `/user/event?uid=32953014&limit=1&lasttime=1558011138743`
@@ -822,6 +844,38 @@ tags: 歌单标签
 24 分享专栏文章
 41、21 分享视频
 ```
+
+### 获取当前登录用户的全部可枚举动态
+
+说明 : 登录后调用此接口，会组合 `/user/account` 与 `/user/event` 的原子能力：先从 Cookie 取得当前用户 id，再自动跟随 `lasttime` 游标读取至 `more=false`。接口返回网易云允许当前用户本人查看的公开及非公开动态，不能读取其他用户的私密动态。
+
+本接口不接受 `limit` 或 `lasttime`，一次请求会完成全部上游分页。账号动态较多时，请预留足够的请求时间。
+
+数量字段说明：
+
+- `size`：网易云返回的账户统计数量，可能包含已删除、被屏蔽、资源失效或旧类型且不再下发的记录。
+- `retrievedCount`：本次实际取得的唯一动态数量，始终等于 `events.length`。
+- `unavailableCount`：`size - retrievedCount` 的正差值；缺失记录没有返回 id，无法继续读取或修改。
+- `sizeMismatch`：`size` 与 `retrievedCount` 是否不一致。若上游未返回 `size`，相关字段为 `null`。
+- `pageCount`：本次实际请求的上游分页数量。
+
+每条动态的 `privacySetting` 表示当前可见权限：`0` 为所有人，`1` 为我关注的人，`2` 为仅自己，`6` 为互相关注的人。
+
+**接口地址 :** `/user/event/all`
+
+**调用例子 :** `/user/event/all`
+
+### 修改动态可见权限
+
+说明 : 登录后调用此接口，可以修改当前账号本人发布的单条动态的可见权限。此接口只负责一次原子修改；上游没有批量修改接口。如需批量操作，可先调用 `/user/event/all` 并按 `privacySetting` 筛选，再由调用方逐条调用本接口，同时自行处理限速、失败重试和部分成功。
+
+**必选参数 :** `evId` : 动态 id
+
+`privacy` : 目标可见权限。`0` 为所有人，`1` 为我关注的人，`2` 为仅自己，`6` 为互相关注的人
+
+**接口地址 :** `/event/privacy`
+
+**调用例子 :** `/event/privacy?evId=6712917601&privacy=0`
 
 ### 转发用户动态
 
@@ -1250,12 +1304,14 @@ tags: 歌单标签
 
 **必选参数 :** `id` : 音乐 id
 `level`: 播放音质等级, 分为 `standard` => `标准`,`higher` => `较高`, `exhigh`=>`极高`,
-`lossless`=>`无损`, `hires`=>`Hi-Res`, `jyeffect` => `高清环绕声`, `sky` => `沉浸环绕声`, `dolby` => `杜比全景声`, `jymaster` => `超清母带`
+`lossless`=>`无损`, `hires`=>`Hi-Res`, `jyeffect` => `高清臻音`, `dolby` => `杜比全景声`, `vivid` => `臻音全景声`, `jymaster` => `超清母带`, `sky` => `沉浸环绕声`
 `unblock`: 是否使用使用歌曲解锁, 分为`true`和`false`
+
+**可选参数 :** `immerseType`: 沉浸声环绕声类型, 分为`c512` => `新版c51类型`, `ste2` => `新版环绕立体声类型`, `aac2` => `新版aac类型`,  `c51` => `c51类型`, `ste` => `环绕立体声类型`, `aac` => `aac类型`, 仅在 `level=sky` 时生效, 默认为 `c51`
 
 **接口地址 :** `/song/url/v1`
 
-**调用例子 :** `/song/url/v1?id=1969519579&level=exhigh` `/song/url/v1?id=1969519579,33894312&level=lossless`
+**调用例子 :** `/song/url/v1?id=1969519579&level=exhigh` `/song/url/v1?id=1969519579,33894312&level=lossless` `/song/url/v1?id=1969519579&level=sky&immerseType=ste` `/song/url/v1?id=1969519579&level=vivid`
 
 说明：`杜比全景声`音质需要设备支持，不同的设备可能会返回不同码率的 url。cookie 需要传入`os=pc`保证返回正常码率的 url。
 
@@ -1265,7 +1321,7 @@ tags: 歌单标签
 
 **必选参数 :** `id` : 音乐 id
 `level`: 播放音质等级, 分为 `standard` => `标准`,`higher` => `较高`, `exhigh`=>`极高`,
-`lossless`=>`无损`, `hires`=>`Hi-Res`, `jyeffect` => `高清环绕声`, `sky` => `沉浸环绕声`, `dolby` => `杜比全景声`, `jymaster` => `超清母带`
+`lossless`=>`无损`, `hires`=>`Hi-Res`, `jyeffect` => `高清臻音`, `dolby` => `杜比全景声`, `vivid` => `臻音全景声`, `jymaster` => `超清母带`, `sky` => `沉浸环绕声`
 `unblock`: 是否使用使用歌曲解锁, 分为`true`和`false`
 
 **接口地址 :** `/song/url/v1/302`
@@ -1389,8 +1445,6 @@ tags: 歌单标签
 
 说明 : 调用此接口 , 传入类型和歌单 id 可收藏歌单或者取消收藏歌单
 
-!> 警告: 在`v4.29.7`版本后, 在网易云登陆后请求要带上`timestamp`字段, 否则会导致请求不合法
-
 **必选参数 :**
 
 `t` : 类型,1:收藏,2:取消收藏
@@ -1403,7 +1457,7 @@ tags: 歌单标签
 
 ### 歌单收藏者
 
-说明 : 调用此接口 , 传入歌单 id 可获取歌单的所有收藏者  
+说明 : 调用此接口 , 传入歌单 id 可获取歌单的所有收藏者
 **必选参数 :**
 
 `id` : 歌单 id
@@ -1496,6 +1550,7 @@ tags: 歌单标签
 
 - （可能存在）JSON 歌曲元数据
 
+
 ```
 {"t":0,"c":[{"tx":"作曲: "},{"tx":"柳重言","li":"http://p1.music.126.net/Icj0IcaOjH2ZZpyAM-QGoQ==/6665239487822533.jpg","or":"orpheus://nm/artist/home?id=228547&type=artist"}]}
 {"t":5403,"c":[{"tx":"编曲: "},{"tx":"Alex San","li":"http://p1.music.126.net/pSbvYkrzZ1RFKqoh-fA9AQ==/109951166352922615.jpg","or":"orpheus://nm/artist/home?id=28984845&type=artist"}]}
@@ -1511,6 +1566,7 @@ tags: 歌单标签
 - `or`：云音乐 app 内路径；例中作用即打开艺术家主页
 
 * 逐字歌词
+
 
 ```
 [16210,3460](16210,670,0)还(16880,410,0)没...
@@ -1588,7 +1644,7 @@ tags: 歌单标签
 
 说明 : 调用此接口 , 传入资源 parentCommentId 和资源类型 type 和资源 id 参数, 可获得该资源的歌曲楼层评论
 
-**必选参数 :**  
+**必选参数 :**
 `parentCommentId`: 楼层评论 id
 
 `id` : 资源 id
@@ -1804,7 +1860,7 @@ tags: 歌单标签
 
 说明 : 调用此接口 , 传入资源类型和资源 id,以及排序方式,可获取对应资源的评论
 
-**必选参数 :**  
+**必选参数 :**
 `id` : 资源 id, 如歌曲 id,mv id
 
 `type`: 数字 , 资源类型 , 对应歌曲 , mv, 专辑 , 歌单 , 电台, 视频对应以下类型
@@ -1827,7 +1883,7 @@ tags: 歌单标签
 7: 电台
 ```
 
-**可选参数 :**  
+**可选参数 :**
 `pageNo`:分页参数,第 N 页,默认为 1
 
 `pageSize`:分页参数,每页多少条数据,默认 20
@@ -2200,7 +2256,7 @@ privilege:权限相关信息
 
 说明 : 调用此接口 , 可获得已收藏专辑列表
 
-**可选参数 :**  
+**可选参数 :**
 `limit`: 取出数量 , 默认为 25
 
 `offset`: 偏移数量 , 用于分页 , 如 :( 页数 -1)\*25, 其中 25 为 limit 的值 , 默认
@@ -2417,6 +2473,18 @@ privilege:权限相关信息
 
 喜欢成功则返回数据的 code 为 200, 其余为失败
 
+### 喜欢音乐 - 新版
+
+说明: 调用此接口 , 传入音乐 id, 可喜欢该音乐
+
+**必选参数 :** `id`: 歌曲 id
+
+**可选参数 :** `like`: 布尔值 , 默认为 true 即喜欢 , 若传 false, 则取消喜欢
+
+**接口地址 :** `/like/v1`
+
+**调用例子 :** `/like/v1?id=347230`
+
 ### 喜欢音乐列表
 
 说明 : 调用此接口 , 传入用户 id, 可获取已喜欢音乐 id 列表(id 数组)
@@ -2492,6 +2560,30 @@ privilege:权限相关信息
 
 **调用例子 :** `/scrobble?id=518066366&sourceid=36780169&time=291`
 
+#### 听歌打卡 V2 (NCBL 加密版)
+
+说明 : 调用此接口，使用桌面客户端 NCBL 加密日志格式上报听歌记录
+
+**必选参数 :** `id`: 歌曲 id, `time`: 播放时长(秒)
+
+**可选参数 :** `sourceid`: 来源列表 id, `source`: 来源名称(默认 list), `name`: 歌曲名, `artist`: 艺术家, `bitrate`: 码率(默认 320), `level`: 音质等级(默认 exhigh), `total`: 歌曲总时长(秒)
+
+**接口地址 :** `/scrobble/v1`
+
+**调用例子 :** `/scrobble/v1?id=518066366&sourceid=36780169&time=291`
+
+### 提交歌曲播放状态
+
+说明 : 调用此接口可提交歌曲播放状态，支持会话追踪和播放模式记录，未传入 `sessionId` 时后端会自动生成
+
+**必选参数 :** `id`: 歌曲 id
+
+**可选参数 :** `sessionId`: 播放会话 ID（12 位大写字母和数字），不传则自动生成, `progress`: 播放进度（秒），默认 0, `playMode`: 播放模式，默认 `list_loop`, `type`: 资源类型，默认 `song`
+
+**接口地址 :** `/relay/play/state/submit`
+
+**调用例子 :** `/relay/play/state/submit?id=518066366&progress=30`
+
 ### 热门歌手
 
 说明 : 调用此接口 , 可获取热门歌手数据
@@ -2509,7 +2601,7 @@ privilege:权限相关信息
 
 说明 : 调用此接口 , 可获取全部 mv
 
-**可选参数 :**  
+**可选参数 :**
 `area`: 地区,可选值为全部,内地,港台,欧美,日本,韩国,不填则为全部
 `type`: 类型,可选值为全部,官方版,原生,现场版,网易出品,不填则为全部
 
@@ -2591,7 +2683,7 @@ privilege:权限相关信息
 
 **接口地址 :** `/program/recommend`
 
-**可选参数 :**  
+**可选参数 :**
 `limit`: 取出数量 , 默认为 10
 
 `offset`: 偏移数量 , 用于分页 , 如 :( 页数 -1)\*10, 其中 10 为 limit 的值 , 默认
@@ -2873,6 +2965,7 @@ type : 地区
 - 适合 Vercel、Netlify 等有请求体限制的平台
 - 需要前端配合实现
 
+
 #### 客户端直传相关接口
 
 **获取上传凭证**
@@ -2919,6 +3012,7 @@ type : 地区
 - `artist`: 艺术家
 - `album`: 专辑名
 
+
 #### 客户端直传流程
 
 1. 客户端计算文件 MD5
@@ -2926,11 +3020,12 @@ type : 地区
 3. 如果 `needUpload` 为 true,直接 PUT 文件到 `uploadUrl`
 4. 调用 `/cloud/upload/complete` 完成导入
 
+
 ### 云盘歌曲信息匹配纠正
 
 说明 : 登录后调用此接口,可对云盘歌曲信息匹配纠正,如需取消匹配,asid 需要传 0
 
-**必选参数 :**  
+**必选参数 :**
 `uid`: 用户 id
 
 `sid`: 云盘的歌曲 id
@@ -3401,7 +3496,7 @@ type='1009' 获取其 id, 如`/search?keywords= 代码时间 &type=1009`
 
 `limit` : 返回数量 , 默认为 30
 
-`offset` : 偏移数量，用于分页 , 如 :( 页数 -1)\*30, 其中 30 为 limit 的值 , 默认为 0  
+`offset` : 偏移数量，用于分页 , 如 :( 页数 -1)\*30, 其中 30 为 limit 的值 , 默认为 0
 **接口地址 :** `/album/list`
 
 **调用例子 :** `/album/list?limit=10`
@@ -3542,6 +3637,36 @@ type='1009' 获取其 id, 如`/search?keywords= 代码时间 &type=1009`
 
 **调用例子 :** `/yunbei/task/finish?userTaskId=5146243240&depositCode=0`
 
+### 云贝广告任务 - 今日任务状态
+
+说明 :登录后调用此接口可查询云贝广告任务（"听歌/看视频得云贝"）今日状态。逆向自云贝任务中心 H5 页面（st.music.163.com/yunbei-listen）。返回 `times`（今日已完成次数）、`amount`（今日累计云贝）、`singleAmount`（单次可得云贝）。单日上限 10 次。
+
+**接口地址 :** `/yunbei/task/list/v1`
+
+**调用例子 :** `/yunbei/task/list/v1`
+
+### 云贝广告任务 - 获取推荐歌曲
+
+说明 :登录后调用此接口可获取云贝广告任务的推荐歌曲列表。返回数组项含 `songId`、`songName`、`artistName`、`albumUrl`、`songChorusStartTime`、`likeFlag`、`alg`（均为 `alg_payrec_yunBei_*`）。
+
+**可选参数 :** `offset`: 偏移数量，默认为 0
+
+`limit`: 取出数量，默认为 10（客户端每次固定取 10 首）
+
+**接口地址 :** `/yunbei/task/recommend/song`
+
+**调用例子 :** `/yunbei/task/recommend/song` `/yunbei/task/recommend/song?offset=0&limit=10`
+
+### 云贝广告任务 - 完成任务领取云贝
+
+说明 :登录后调用此接口可完成任务并领取云贝。实测仅需传 `yunbeiAmount`（单次云贝数，客户端从 `list` 接口的 `singleAmount` 取值，当前为 150）即可成功领取，无需真实听歌/看视频。单日上限 10 次 × 150 = 1500 云贝/天，超限返回 `code:400 "单日完成任务数已达上限"`。建议领取前先调用 `/yunbei/task/list/v1` 查询今日剩余次数。
+
+**可选参数 :** `yunbeiAmount`: 单次云贝数，默认为 150
+
+**接口地址 :** `/yunbei/task/finish/v1`
+
+**调用例子 :** `/yunbei/task/finish/v1?yunbeiAmount=150`
+
 ### 云贝收入
 
 说明 :登录后调用此接口可获取云贝收入
@@ -3560,7 +3685,7 @@ type='1009' 获取其 id, 如`/search?keywords= 代码时间 &type=1009`
 
 **可选参数 :** `limit`: 取出评论数量 , 默认为 10
 
-`offset`: 偏移数量 , 用于分页 , 如 :( 评论页数 -1)\*10, 其中 10 为 limit 的值  
+`offset`: 偏移数量 , 用于分页 , 如 :( 评论页数 -1)\*10, 其中 10 为 limit 的值
 **接口地址 :** `/yunbei/tasks/expense`
 
 **调用例子 :** `/yunbei/tasks/expense?limit=1`
@@ -3576,6 +3701,32 @@ type='1009' 获取其 id, 如`/search?keywords= 代码时间 &type=1009`
 **接口地址 :** `/artist/new/song`
 
 **调用例子 :** `/artist/new/song?limit=1` `/artist/new/song?limit=1&before=1602777625000`
+
+### 关注歌手最近新歌 - 播放全部
+
+说明 : 登录后调用此接口可获取所有关注歌手最近的 50 首新歌
+
+**接口地址 :** `/artist/new/song/playall`
+
+**调用例子 :** `/artist/new/song/playall`
+
+### 关注歌手新作品（歌曲/MV）
+
+说明 : 登录后调用此接口可分页获取关注歌手的新歌曲和 MV
+
+**可选参数 :** `limit`: 返回数量，默认为 10
+
+`startTimestamp`: 时间游标，首次请求默认为当前时间，后续请求传入上一页返回的时间游标
+
+`before`: `startTimestamp` 的别名
+
+`sourceType`: 作品来源类型，已确认 `1` 表示新歌，其他取值待确认，默认为 `1`
+
+`firstRequest`: 是否首次请求，默认为 `true`，翻页时传 `false`
+
+**接口地址 :** `/artist/new/song/mv/list/v2`
+
+**调用例子 :** `/artist/new/song/mv/list/v2` `/artist/new/song/mv/list/v2?startTimestamp=1783680576099&sourceType=1&limit=10&firstRequest=false`
 
 ### 关注歌手新 MV
 
@@ -3706,6 +3857,14 @@ type='1009' 获取其 id, 如`/search?keywords= 代码时间 &type=1009`
 **接口地址 :** `/vip/growthpoint/get`
 
 **调用例子 :** `/vip/growthpoint/get?ids=7043206830_7` `/vip/growthpoint/get?ids=8613118351_1,8607552957_1`
+
+### 一键领取所有 vip 成长值
+
+说明 : 登录后调用此接口 , 一键领取所有已完成的会员任务成长值奖励
+
+**接口地址 :** `/vip/growthpoint/getall`
+
+**调用例子 :** `/vip/growthpoint/getall`
 
 ### 歌手粉丝
 
@@ -3991,6 +4150,16 @@ type='1009' 获取其 id, 如`/search?keywords= 代码时间 &type=1009`
 
 **调用例子:** `/song/wiki/summary?id=1958384591`
 
+### 音乐百科
+
+说明: 调用此接口可以获取歌曲的音乐百科信息
+
+**接口地址:** `/song/wiki/info`
+
+**必选参数:** `id`: 歌曲 ID
+
+**调用例子:** `/song/wiki/info?id=1958384591`
+
 ### 乐谱列表
 
 说明: 调用此接口可以获取歌曲的乐谱列表
@@ -4198,6 +4367,7 @@ ONLINE 已发布
   - `voiceFeeType: 0`：返回免费的声音
   - `voiceFeeType: 1`：返回收费的声音
 
+
 ### 播客声音详情
 
 说明: 获取播客里的声音详情
@@ -4252,27 +4422,33 @@ ONLINE 已发布
 
 ### 播客上传声音
 
-说明: 可以上传声音到播客,例子在 `/public/voice_upload.html` 访问地址: <a href="/voice_upload.html" target="_blank">/voice_upload.html</a>
+说明: 登录后调用此接口,使用`'Content-Type': 'multipart/form-data'`上传声音文件 formData(name 为`songFile`),可通过 formData(name 为`imgFile`)同时上传声音封面。例子在 `/public/voice_upload.html` 访问地址: <a href="/voice_upload.html" target="_blank">/voice_upload.html</a>
 
 **接口地址:** `/voice/upload`
 
 **必选参数：**
-`voiceListId`: 播客 id
 
-`coverImgId`: 播客封面
+`songFile`: 声音文件
+
+`voiceListId`: 播客 id
 
 `categoryId`: 分类 id
 
-`secondCategoryId`:次级分类 id
+`secondCategoryId`: 次级分类 id
 
 `description`: 声音介绍
 
 **可选参数：**
+
+`imgFile`: 声音封面图片文件,上传后会自动生成图片 id。与`coverImgId`同时传入时,优先使用`imgFile`
+
+`coverImgId`: 已上传的声音封面图片 id,未传入`imgFile`时使用该值
+
 `songName`: 声音名称
 
-`privacy`: 设为隐私声音,播客如果是隐私博客,则必须设为 1
+`privacy`: 设为隐私声音,播客如果是隐私播客,则必须设为 1
 
-`publishTime`:默认立即发布,定时发布的话需传入时间戳
+`publishTime`: 默认立即发布,定时发布的话需传入时间戳
 
 `autoPublish`: 是否发布动态,是则传入 1
 
@@ -4499,7 +4675,7 @@ qrCodeStatus:20,detailReason:0 验证成功 qrCodeStatus:21,detailReason:0 二�
 
 ### 歌曲音质详情
 
-说明: 调用此接口获取歌曲各个音质的文件信息，与 `获取歌曲详情` 接口相比，多出 `高清环绕声`、`沉浸环绕声`、`超清母带`等音质的信息
+说明: 调用此接口获取歌曲各个音质的文件信息，与 `获取歌曲详情` 接口相比，多出`高清臻音`、`杜比全景声`、`臻音全景声`、`超清母带`、`沉浸环绕声`等音质的信息
 
 **必选参数：**
 
@@ -4536,11 +4712,11 @@ qrCodeStatus:20,detailReason:0 验证成功 qrCodeStatus:21,detailReason:0 二�
 
 **必选参数：**
 
-`mode`: 模式 (aidj, DEFAULT, FAMILIAR, EXPLORE, SCENE_RCMD)
+`mode`: 模式 (`DEFAULT`: 默认模式,`FAMILIAR`: 熟悉模式,`EXPLORE`: 探索模式,`SCENE_RCMD`: 场景模式, 需要传入`submode`参数,`PUZZLE_MODE_RCMD`: 拼图模式)
 
 **可选参数：**
 
-`submode`: 当 mode 为 SCENE_RCMD 是可为 ( EXERCISE, FOCUS, NIGHT_EMO )
+`submode`: 当 mode 为 SCENE_RCMD 时传入 ( `EXERCISE`: 运动, `FOCUS`: 专注, `NIGHT_EMO`: 伤感, `SLEEP_HELP`: 助眠, `RELAX`: 放松, `CHEERFUL`: 欢快, `LYRICAL`: 抒情, `CURE`: 治愈, `SWEET`: 情歌, `RHYTHM_BLUES`: R&B, `RAINY`: 雨天, `GAMES`: 游戏, `RAP`: 说唱, `K_POP`: K-Pop, `ORIGINAL_MUSICIAL`: 宝藏原创, `ELECTRONIC`: 电音, `COMMUTE`: 出行, `TAKE_SHOWER`: 洗澡, `COFFEE_SHOP`: 咖啡馆, `ROCK`: 摇滚, `INSPIRATIONAL`: 励志, `CHINESE`: 华语, `ENGLISH`: 欧美, `YUEYU`: 粤语, `MANYAO`: 慢摇DJ, `JINGDIAN`: 经典, `LIGHT`: 轻音乐, `GUOFENG`: 国风, `FOLK`: 民谣, `ACG`: 二次元, `GUDIAN`: 古典, `JAZZ`: 爵士, `JAPANESE`: 日语, `GLOBAL`: 全球, `FRANCH`: 法语, `BLUE`: 蓝调, `DANCE`: 舞蹈, `LATIN`: 拉丁, `PUNK`: 放克, `COUNTRY`: 乡村乐, `MUSICAL`: 音乐剧, `YINGSHI`: 影视)
 
 **接口地址:** `/personal/fm/mode`
 
@@ -4620,7 +4796,7 @@ bitrate = Math.floor(br / 1000)
 
 **必选参数 :** `id` : 音乐 id
 `level`: 播放音质等级, 分为 `standard` => `标准`,`higher` => `较高`, `exhigh`=>`极高`,
-`lossless`=>`无损`, `hires`=>`Hi-Res`, `jyeffect` => `高清环绕声`, `sky` => `沉浸环绕声`, `dolby` => `杜比全景声`, `jymaster` => `超清母带`
+`lossless`=>`无损`, `hires`=>`Hi-Res`, `jyeffect` => `高清臻音`, `dolby` => `杜比全景声`, `vivid` => `臻音全景声`, `jymaster` => `超清母带`, `sky` => `沉浸环绕声`
 
 **接口地址 :** `/song/download/url/v1`
 
@@ -4773,6 +4949,23 @@ bitrate = Math.floor(br / 1000)
 说明 : 登录后调用此接口, 获取今日收听
 
 **接口地址 :** `/listen/data/today/song`
+
+### 听歌足迹 - 歌曲播放排行
+
+说明 : 登录后调用此接口, 获取歌曲播放排行, 返回每首歌的播放次数 (playCount); 默认返回前 20 名 (Top20), 不足则返回全部
+
+**必选参数 :**
+
+`type`: 维度类型 周 week 月 month
+
+**可选参数 :**
+
+`endTime` : 周: 每周周六 0 点的时间戳 月: 每月最后一天 0 点的时间戳
+不填就是本周/月的
+
+**接口地址 :** `/listen/data/song/play/rank`
+
+**调用例子 :** `/listen/data/song/play/rank?type=month`
 
 ### 听歌足迹 - 总收听时长
 
@@ -5052,7 +5245,6 @@ let data = encodeURIComponent(
 
 **调用例子:** `/broadcast/sub?id=5&t=1`
 
-
 ### 用户的创建歌单列表
 
 说明 : 调用此接口, 传入用户id, 获取用户的创建歌单列表
@@ -5119,7 +5311,7 @@ let data = encodeURIComponent(
 
 说明 : 登录后调用此接口, 获取我创建的博客声音
 
-**可选参数 :** 
+**可选参数 :**
 
 `limit` : 返回数量 , 默认为 20
 
@@ -5127,12 +5319,11 @@ let data = encodeURIComponent(
 
 **调用例子 :** `/voicelist/my/created`
 
-
 ### DIFM电台 - 分类
 
 说明: 调用此接口, 获取DIFM电台分类
 
-**必选参数 :**  
+**必选参数 :**
 
 `sources`: 来源列表, 0: 最嗨电音 1: 古典电台 2: 爵士电台
 
@@ -5144,7 +5335,7 @@ let data = encodeURIComponent(
 
 说明: 调用此接口, 获取DIFM电台收藏列表
 
-**必选参数 :**  
+**必选参数 :**
 
 `sources`: 来源列表, 0: 最嗨电音 1: 古典电台 2: 爵士电台
 
@@ -5180,7 +5371,7 @@ let data = encodeURIComponent(
 
 说明: 调用此接口, 获取DIFM播放列表
 
-**必选参数 :**  
+**必选参数 :**
 
 `source`: 来源, 0: 最嗨电音 1: 古典电台 2: 爵士电台
 
@@ -5214,7 +5405,7 @@ let data = encodeURIComponent(
 
 说明: 调用此接口, 获取标签下资源列表; 接口返回的`trackId`可以用于请求`/song/url/v1`接口，用于获取声音的下载地址
 
-**必选参数 :**  
+**必选参数 :**
 
 `tag`: 标签, 由标签列表接口得到
 
@@ -5226,7 +5417,7 @@ let data = encodeURIComponent(
 
 说明: 调用此接口, 查看同类推荐
 
-**必选参数 :**  
+**必选参数 :**
 
 `id`: id, `/sati/tag/list`接口返回的`trackId`
 
@@ -5246,7 +5437,7 @@ let data = encodeURIComponent(
 
 说明: 调用此接口, 收藏声音
 
-**必选参数 :**  
+**必选参数 :**
 
 `id`: id, `/sati/tag/list`接口返回的`trackId`
 
@@ -5262,7 +5453,7 @@ let data = encodeURIComponent(
 
 说明: 调用此接口，获取跑步漫游的歌曲信息
 
-**必选参数：**     
+**必选参数：**
 
 `bpm`: 步频
 
@@ -5306,7 +5497,7 @@ let data = encodeURIComponent(
 
 **接口地址 :** `/comment/report`
 
-**调用例子 :* `/comment/report?id=2058263032&cid=123456789&reason=人身攻击`
+*_调用例子 :_ `/comment/report?id=2058263032&cid=123456789&reason=人身攻击`
 
 ### 多级行政区划数据
 
@@ -5377,6 +5568,315 @@ let data = encodeURIComponent(
 **接口地址 :** `/vip/sign/history`
 
 **调用例子 :** `/vip/sign/history`
+
+### 直接获取云盘歌曲下载链接
+
+说明 : 调用此接口, 传入云盘歌曲 id, 可直接获取云盘歌曲下载链接
+
+**必选参数 :** `id`: 云盘歌曲 id
+
+**接口地址 :** `/song/cloud/download`
+
+**调用例子 :** `/song/cloud/download?id=123456789`'
+
+### 获取广告
+
+说明 : 调用此接口, 可获取广告
+
+**接口地址 :** `/ad/get`
+
+**调用例子 :** `/ad/get`
+
+### 看广告领取权益（免费听歌时长 / 云贝等）
+
+说明 : 登录后调用此接口, 领取广告权益。权益类型由广告平台下发的配置决定, 不仅限于 30 分钟免费听歌时长, 还包括"看视频获得最高 2000 云贝"等拉新分段权益(`rightsGainMethod=6`)。除下方常用参数外, 权益类型/时长/扩展权益等其余字段会自动从广告下发配置补齐, 无需手动传入。
+
+!> 警告: 通过调取接口出现的任何问题由调用者自行承担
+
+**可选参数 :**
+
+`reqUid` : 广告请求 ID, 通过 `/ad/get` 获取, 未传时自动获取
+
+`uid` : 当前登录用户 ID, 不传时服务端从 Cookie 识别
+
+`rightsGainMethod` : 权益领取方式, `1`: 曝光, `2`: 曝光+点击(默认), `3`: 曝光+下载, `4`: 点击+停留, `5`: 曝光或点击停留, `6`: 拉新曝光/下载分段权益(看视频得云贝)
+
+`type_ids` : 广告位类型, 默认 `["400002_0"]`
+
+`creativeType` : 广告创意类型, 激励视频场景为 `36`, 默认 `36`
+
+**接口地址 :** `/ad/listening/rights/gain`
+
+**调用例子 :** `/ad/listening/rights/gain`
+
+### 获取免费听时长状态
+
+说明 : 登录后调用此接口, 获取免费听剩余时长
+
+**接口地址 :** `/ad/listening/rights`
+
+**调用例子 :** `/ad/listening/rights`
+
+### 云小编 - 获取用户详情
+
+说明: 登录后调用此接口, 获取云小编用户详情
+
+**接口地址:** `/rep/ugc/user/get`
+
+**调用例子:** `/rep/ugc/user/get`
+
+### 云小编 - 每日签到
+
+说明: 登录后调用此接口, 进行云小编签到, 领取 5 积分, 签到后 `/rep/ugc/user/get` 返回 `data.signed = 1`
+
+**接口地址:** `/rep/ugc/user/sign`
+
+**调用例子:** `/rep/ugc/user/sign`
+
+### 云小编 - 查询会员任务状态
+
+说明: 登录后调用此接口, 查询云小编会员任务状态, 当 `data.status = 20` 时, 可调用 `/rep/ugc/user/collect-vip` 领取会员
+
+**接口地址:** `/rep/ugc/user/vip`
+
+**调用例子:** `/rep/ugc/user/vip`
+
+### 云小编 - 活动信息
+
+说明: 登录后调用此接口, 查询云小编会员活动信息
+
+**接口地址:** `/rep/ugc/activity/get`
+
+**调用例子:** `/rep/ugc/activity/get`
+
+### 云小编 - 获取任务
+
+> 注意: 调用前请先使用官方客户端完成云小编“情绪标签审核”入站考试
+
+**可选参数:**
+
+`type`: 任务类型, 1: 歌曲曲风审核, 2: 歌曲语种审核, 3: 歌曲原唱审核, 4: 情绪标签审核, 默认 `4`
+
+**接口地址:** `/thinktank/audit/resource/detail`
+
+**调用例子:** `/thinktank/audit/resource/detail?type=4`
+
+### 云小编 - 提交任务
+
+> 注意: 投票结果会在后台审核, 一致 +3 积分, 不一致 -2 积分
+
+**可选参数:**
+
+`type`: 任务类型, 1: 歌曲曲风审核, 2: 歌曲语种审核, 3: 歌曲原唱审核, 4: 情绪标签审核, 默认 `4`
+
+**必选参数:**
+
+`taskId`: 任务 ID, 调用 `/thinktank/audit/resource/detail` 获取 `data.taskId`
+
+`judgement`: 审核结果, 1: 同意, 2: 否决, 3: 跳过 (不算次数)
+
+**接口地址:** `/thinktank/audit/resource/update`
+
+**调用例子:** `/thinktank/audit/resource/update?type=4&taskId=123456&judgement=1`
+
+### 云小编 - 领取任务积分
+
+说明: 完成任务后调用此接口, 领取云小编任务积分
+
+**可选参数:**
+
+`activityId`: 活动 ID, 调用 `/rep/ugc/activity/get` 获取, 默认 `5001`
+
+**接口地址:** `/rep/ugc/activity/collect`
+
+**调用例子:** `/rep/ugc/activity/collect?activityId=5001`
+
+### 云小编 - 领取一日会员
+
+说明: 达成领取条件 (`/rep/ugc/user/vip`) 后调用此接口, 领取一日会员
+
+**可选参数:**
+
+`activityId`: 活动 ID, 调用 `/rep/ugc/activity/get` 获取, 默认 `5001`
+
+**接口地址:** `/rep/ugc/user/collect-vip`
+
+**调用例子:** `/rep/ugc/user/collect-vip?activityId=5001`
+
+### 云小编 - 剩余抽奖次数
+
+说明: 登录后调用此接口, 获取今日云小编抽奖剩余次数
+
+**可选参数:**
+
+`activityId`: 活动 ID, 默认 `6501202`
+
+**接口地址:** `/middle/play/lottery/remain/chance`
+
+**调用例子:** `/middle/play/lottery/remain/chance?activityId=6501202`
+
+### 云小编 - 每日抽奖
+
+说明: 登录后调用此接口, 消耗 200 积分进行抽奖, 每日最多抽 3 次
+
+> 注意: 抽奖失败也消耗每日次数, 请先调用 `/rep/ugc/user/get` 查询可用积分
+
+**可选参数:**
+
+`activityId`: 活动 ID, 默认 `6501202`
+
+`drawCount`: 未知, 默认 `1`
+
+`checkToken`: 易盾反作弊 Token, 默认自动获取
+
+**接口地址:** `/middle/play/do/lottery`
+
+**调用例子:** `/middle/play/do/lottery?activityId=6501202&drawCount=1`
+
+### 发送/删除评论
+
+说明 : 调用此接口,可发送评论或者删除评论
+
+1. 发送评论
+
+   **必选参数**
+
+   `type`: 数字,资源类型,对应歌曲,mv,专辑,歌单,电台,视频对应以下类型
+
+   ```
+   0: 歌曲
+
+   1: mv
+
+   2: 歌单
+
+   3: 专辑
+
+   4: 电台
+
+   5: 视频
+
+   6: 动态
+   ```
+
+   `id`: 对应资源 id
+
+   `content`: 要发送的内容
+
+   **调用例子** : `/comment/add?type=1&id=5436712&content=test` (往广岛之恋 mv 发送评论: test)
+
+2. 回复评论
+
+   **必选参数**
+
+   `type`: 数字,资源类型,对应歌曲,mv,专辑,歌单,电台,视频对应以下类型
+
+   ```
+   0: 歌曲
+
+   1: mv
+
+   2: 歌单
+
+   3: 专辑
+
+   4: 电台
+
+   5: 视频
+
+   6: 动态
+   ```
+
+   `id`: 对应资源 id
+
+   `cid`: 评论 id
+
+   `content`: 要发送的内容
+
+   **调用例子** : `/comment/add?type=1&id=5436712&cid=1535550516319&content=test` (往广岛之恋 mv 回复test评论: test)
+
+3. 删除评论
+
+   **必选参数**
+
+   `type`: 数字,资源类型,对应歌曲,mv,专辑,歌单,电台,视频对应以下类型
+
+   ```
+   0: 歌曲
+
+   1: mv
+
+   2: 歌单
+
+   3: 专辑
+
+   4: 电台节目
+
+   5: 视频
+
+   6: 动态
+
+   7: 电台
+
+   ```
+
+   `id`: 对应资源 id
+
+   `cid`: 评论 id
+
+   **调用例子** : `/comment?type=1&id=5436712&cid=1535550516319` (在广岛之恋 mv 删除评论)
+
+### 获取在线设备列表
+
+说明: 登录后调用此接口, 获取在线设备列表
+
+**接口地址:** `/device/list`
+
+**调用例子:** `/device/list`
+
+### 发送安全验证码
+
+说明: 登录后调用此接口, 传入手机号, 可发送安全验证码
+
+**必选参数 :** `phone`: 手机号
+
+**接口地址 :** `/captcha/safe/sent`
+
+**调用例子 :** `/captcha/safe/sent?phone=13XXXXXXXXX`
+
+### 强制下线设备
+
+说明: 登录后调用此接口, 传入设备 id, 可强制下线设备的登录会话
+
+**必选参数 :** `key`: 设备的 `deviceKey`, 可通过 `/device/list` 获取
+
+`captcha`: 安全验证码, 可通过 `/captcha/safe/sent` 获取
+
+**接口地址 :** `/device/kickoff`
+
+**调用例子 :** `/device/kickoff?key=00ALDFGEXXXXXXXXXXXXXXXXX&captcha=1234`
+
+### 上报设备中心设备名称
+
+说明: 登录后调用此接口, 传入 `deviceName`, 可修改当前设备在网易云登录设备管理列表里显示的名称
+
+**必选参数 :** `deviceName`: 期望展示的设备名称
+
+`name`: `deviceName` 的兼容别名, 二选一即可
+
+**接口地址 :** `/deviceinfo/center/upload`
+
+**调用例子 :** `/deviceinfo/center/upload?deviceName=XXXXX`
+
+### 插播相似歌曲
+
+说明: 调用此接口, 传入歌曲 id, 可获取插播相似歌曲
+
+**必选参数 :** `id`: 歌曲 id
+
+**接口地址 :** `/song/simi/get`
+
+**调用例子 :** `/song/simi/get?id=39227633`
 
 ## 离线访问此文档
 

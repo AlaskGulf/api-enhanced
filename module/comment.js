@@ -25,6 +25,6 @@ module.exports = (query, request) => {
   return request(
     `/api/resource/comments/${query.t}`,
     data,
-    createOption(query, 'weapi'),
+    createOption(query, 'eapi', 'v2'),
   )
 }

@@ -6,5 +6,9 @@ module.exports = (query, request) => {
     cellphone: query.phone,
     countrycode: query.countrycode,
   }
-  return request(`/api/cellphone/existence/check`, data, createOption(query))
+  return request(
+    `/api/cellphone/existence/check`,
+    data,
+    createOption(query, 'eapi'),
+  )
 }

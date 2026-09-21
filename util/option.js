@@ -1,4 +1,4 @@
-const createOption = (query, crypto = '') => {
+const createOption = (query, crypto = '', checkToken = false) => {
   return {
     crypto: query.crypto || crypto || '',
     cookie: query.cookie || process.env.NETEASE_COOKIE,
@@ -11,7 +11,9 @@ const createOption = (query, crypto = '') => {
         : ['true', true].includes(query.randomCNIP),
     e_r: query.e_r || undefined,
     domain: query.domain || '',
-    checkToken: query.checkToken || false,
+    checkToken: query.checkToken || checkToken,
+    headers: query.headers || {},
+    timeout: query.timeout || 0,
   }
 }
 module.exports = createOption
